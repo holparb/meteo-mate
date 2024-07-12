@@ -7,5 +7,5 @@ sealed class Resource<out S, out E> {
 
 sealed class WeatherError {
     data class NetworkError(val message: String?) : WeatherError()
-    object LocalDataError: WeatherError()
+    data object LocalDataError: WeatherError()
 }
