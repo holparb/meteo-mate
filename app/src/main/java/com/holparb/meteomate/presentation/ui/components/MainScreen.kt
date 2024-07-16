@@ -4,7 +4,9 @@ import android.annotation.SuppressLint
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.width
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.MaterialTheme
@@ -31,7 +33,9 @@ fun MainScreen(
             .fillMaxSize()
     ) { _ ->
         Column(
-            modifier = Modifier.fillMaxSize().background(DarkBlue),
+            modifier = Modifier
+                .fillMaxSize()
+                .background(DarkBlue),
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.Center
         ) {
@@ -45,6 +49,8 @@ fun MainScreen(
                 }
                 Status.Loaded -> {
                     WeatherCard(state = state, backgroundColor = DeepBlue)
+                    Spacer(modifier = Modifier.height(16.dp))
+                    WeatherForecast(state = state)
                 }
                 Status.Error -> {
                     val errorText = state.errorMessage ?: "Unknown error occured!"

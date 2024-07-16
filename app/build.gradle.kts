@@ -86,6 +86,7 @@ dependencies {
     implementation (libs.retrofit)
     implementation (libs.converter.moshi)
     implementation (libs.logging.interceptor)
+    ksp(libs.moshi.codegen)
 
     // Location Services
     implementation(libs.play.services.location)

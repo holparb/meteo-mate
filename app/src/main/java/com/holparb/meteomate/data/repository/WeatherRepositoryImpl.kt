@@ -1,5 +1,6 @@
 package com.holparb.meteomate.data.repository
 
+import android.util.Log
 import com.holparb.meteomate.data.datasource.remote.WeatherApi
 import com.holparb.meteomate.data.weather.mappers.toWeatherInfo
 import com.holparb.meteomate.domain.repository.WeatherRepository
@@ -16,7 +17,8 @@ class WeatherRepositoryImpl @Inject constructor(private val api: WeatherApi): We
             )
         }
         catch(e: Exception) {
-            Resource.Error(error = WeatherError.NetworkError(e.message))
+            Log.e(this::class.simpleName, e.localizedMessage ?: "Unknown error")
+            Resource.Error(error = WeatherError.NetworkError("Couldn't fetch weather data, please try again!"))
         }
     }
 }

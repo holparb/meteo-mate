@@ -3,6 +3,7 @@ package com.holparb.meteomate.di
 import com.holparb.meteomate.data.datasource.remote.WeatherApi
 import com.holparb.meteomate.data.repository.WeatherRepositoryImpl
 import com.holparb.meteomate.domain.repository.WeatherRepository
+import com.squareup.moshi.Moshi
 import dagger.Binds
 import dagger.Module
 import dagger.Provides
@@ -21,7 +22,7 @@ object WeatherApiModule {
     @Singleton
     fun providesWeatherApi(): WeatherApi {
         return Retrofit.Builder()
-            .baseUrl("https://open-meteo.com")
+            .baseUrl("https://api.open-meteo.com")
             .addConverterFactory(MoshiConverterFactory.create())
             .build()
             .create()
