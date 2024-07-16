@@ -24,14 +24,16 @@ class WeatherViewModel @Inject constructor(
     private fun loadWeatherInfo() {
         viewModelScope.launch {
             _state.update {
-                it.copy(isLoading = true, error = null)
+                it.copy(
+                    status = Status.Loading, errorMessage = null
+                )
             }
             when(val locationResult = locationTracker.getCurrentLocation()) {
                 is Resource.Error -> {
                     _state.update {
                         it.copy(
-                            isLoading = false,
-                            error = locationResult.error.message
+                            status = Status.Error,
+                            errorMessage = locationResult.error.message
                         )
                     }
                 }
@@ -40,8 +42,8 @@ class WeatherViewModel @Inject constructor(
                         is Resource.Success -> {
                             _state.update {
                                 it.copy(
-                                    isLoading = false,
-                                    error = null,
+                                    status = Status.Loaded,
+                                    errorMessage = null,
                                     weatherInfo = weatherResult.data
                                 )
                             }
@@ -49,9 +51,9 @@ class WeatherViewModel @Inject constructor(
                         is Resource.Error -> {
                             _state.update {
                                 it.copy(
-                                    isLoading = false,
+                                    status = Status.Error,
                                     weatherInfo = null,
-                                    error = (weatherResult.error as? WeatherError.NetworkError)?.message
+                                    errorMessage = (weatherResult.error as? WeatherError.NetworkError)?.message
                                 )
                             }
                         }

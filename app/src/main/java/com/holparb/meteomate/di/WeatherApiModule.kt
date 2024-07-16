@@ -1,6 +1,9 @@
 package com.holparb.meteomate.di
 
 import com.holparb.meteomate.data.datasource.remote.WeatherApi
+import com.holparb.meteomate.data.repository.WeatherRepositoryImpl
+import com.holparb.meteomate.domain.repository.WeatherRepository
+import dagger.Binds
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -12,7 +15,7 @@ import javax.inject.Singleton
 
 @Module
 @InstallIn(SingletonComponent::class)
-object WeatherModule {
+object WeatherApiModule {
 
     @Provides
     @Singleton
@@ -24,3 +27,15 @@ object WeatherModule {
             .create()
     }
 }
+
+@Module
+@InstallIn(SingletonComponent::class)
+abstract class WeatherRepositoryModule {
+
+    @Binds
+    @Singleton
+    abstract fun bindWeatherRepository(
+        weatherRepositoryImpl: WeatherRepositoryImpl
+    ): WeatherRepository
+}
+

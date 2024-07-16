@@ -1,10 +1,8 @@
 package com.holparb.meteomate.data.location
 
-import android.Manifest
 import android.annotation.SuppressLint
 import android.app.Application
-import android.content.pm.PackageManager
-import androidx.core.app.ActivityCompat
+import android.util.Log
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.holparb.meteomate.domain.location.LocationData
 import com.holparb.meteomate.domain.location.LocationTracker
@@ -20,12 +18,12 @@ class DefaultLocationTracker @Inject constructor(
     private val application: Application
 ): LocationTracker {
     @SuppressLint("MissingPermission")
-    override suspend fun getCurrentLocation(): Resource<LocationData, LocationTracker.LocationException> {
+    override suspend fun getCurrentLocation(): Resource<LocationData, LocationTracker.LocationError> {
         if(!application.hasLocationPermission()) {
-            return Resource.Error(LocationTracker.LocationException("Location permission is not granted!"))
+            return Resource.Error(LocationTracker.LocationError("Location permission is not granted!"))
         }
         if(!application.isGpsEnabled()) {
-            return Resource.Error(LocationTracker.LocationException("GPS is not enabled"))
+            return Resource.Error(LocationTracker.LocationError("GPS is not enabled"))
         }
 
         return suspendCancellableCoroutine { cont ->
@@ -36,16 +34,21 @@ class DefaultLocationTracker @Inject constructor(
                         cont.resume(Resource.Success(locationData))
                     }
                     else {
-                        cont.resume(Resource.Error(LocationTracker.LocationException("Location fetch was not successful")))
+                        cont.resume(Resource.Error(LocationTracker.LocationError("Location fetch was not successful")))
                     }
                     return@suspendCancellableCoroutine
                 }
-                addOnSuccessListener {
-                    val locationData = LocationData(result.latitude, result.longitude)
-                    cont.resume(Resource.Success(locationData))
+                addOnSuccessListener { locationResult ->
+                    if(locationResult != null) {
+                        val locationData = LocationData(locationResult.latitude, locationResult.longitude)
+                        cont.resume(Resource.Success(locationData))
+                    }
+                    else {
+                        cont.resume(Resource.Error(LocationTracker.LocationError("Location fetch was not successful")))
+                    }
                 }
                 addOnFailureListener {
-                    cont.resume(Resource.Error(LocationTracker.LocationException("Location fetch was not successful")))
+                    cont.resume(Resource.Error(LocationTracker.LocationError("Location fetch was not successful")))
                 }
                 addOnCanceledListener {
                     cont.cancel()
